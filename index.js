@@ -12,7 +12,7 @@ const cookieParser = require('cookie-parser');
 app.use(express.urlencoded());
 
 // Set the cookie parser
-app.use(cookieParser);
+app.use(cookieParser());
 
 //Set the static file path - When using the assets directly give the sub folders like css/layout.css
 app.use(express.static('./assets'));
