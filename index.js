@@ -1,8 +1,16 @@
 const express = require('express');
 const app = express();
 const port = 8000;
+const expressLayouts = require('express-ejs-layouts');
 
-app.use('/', require('./Routes'));
+// Use the layouts before the routes
+app.use(expressLayouts);
+
+app.use('/', require('./routes'));
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
+
 
 app.listen(port, function (err) {
     if (err) {
@@ -11,9 +19,4 @@ app.listen(port, function (err) {
     }
 
     console.log(`Server is running on port: ${port}`);
-});
-
-
-app.get('/', function (req, res) {
-    console.log('first');
 });
