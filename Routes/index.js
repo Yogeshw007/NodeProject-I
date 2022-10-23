@@ -3,11 +3,9 @@ const router = express.Router();
 const homeController = require('../controllers/home_controller');
 const usersController = require('..');
 
-console.log('router loaded')
-
 router.get('/', homeController.home);
-router.get('/contact', homeController.contact);
 
+//Path that starts with /users should
 router.use('/users', require('./users'));
 
 
