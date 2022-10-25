@@ -4,9 +4,10 @@ const passport = require('passport');
 
 const usersController = require('../controllers/user_controller');
 
-router.get('/profile', usersController.profile);
-router.get('/sign-up', usersController.signup);
-router.get('/sign-in', usersController.signin);
+//passport.checkAuthentication if returns true then only the page gets rendered
+router.get('/profile', passport.checkAuthentication, usersController.profile);
+router.get('/sign-up', usersController.signUp);
+router.get('/sign-in', usersController.signIn);
 
 router.post('/create', usersController.create);
 
@@ -15,5 +16,7 @@ router.post('/create-session', passport.authenticate(
     'local', // passport strategy
     { failureRedirect: '/users/sign-in' }, // if failes to authenticate then path user needs to land on
 ), usersController.createSession);
+
+router.get('/sign-out', usersController.signOut);
 
 module.exports = router;

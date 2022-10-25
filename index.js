@@ -15,6 +15,8 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const passportLocal = require('./config/parallel-local-strategy');
 
+const MongoStore = require('connect-mongo');
+
 // Middlware - to read the req query, body & params
 app.use(express.urlencoded());
 
@@ -38,6 +40,7 @@ app.set('views', './views');
 // Use in the order to work properly
 //To create a session cookie
 //To store the logged in user's information in an encrypted format in the cookie
+// mongo store is used to store the session cookie in the db
 app.use(session({
     name: 'codiel',
     // TODO change the secret before deploy in production
@@ -46,11 +49,22 @@ app.use(session({
     resave: false, //Save again the cookie
     cookie: {
         maxAge: 1000 * 60 * 100
-    }
+    },
+    store: MongoStore.create(
+        {
+            mongoUrl: 'mongodb://localhost/codeial_development',
+            autoRemove: 'disabled'
+        },
+        function (err) {
+            console.log(err || 'connect-mongodb setup ok');
+        }
+    )
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(passport.setAuthenticatedUser);
 
 // use express router
 app.use('/', require('./routes'));

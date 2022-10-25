@@ -9,16 +9,26 @@ module.exports.profile = function (req, res) {
 }
 
 
-module.exports.signup = function (req, res) {
+module.exports.signUp = function (req, res) {
+    //To redirect to profile page if already logged in
+    if (req.isAuthenticated()) {
+        return res.redirect('/users/profile');
+    }
+
     return res.render('sign_up', {
         title: 'Sign up'
     });
 }
 
-module.exports.signin = function (req, res) {
-    return res.render('sign_in', {
-        title: 'Sign in'
-    });
+module.exports.signIn = function (req, res) {
+    //To redirect to profile page if already logged in 
+    if (req.isAuthenticated()) {
+        return res.redirect('/users/profile');
+    } else {
+        return res.render('sign_in', {
+            title: 'Sign in page'
+        });
+    }
 }
 
 module.exports.create = function (req, res) {
@@ -48,10 +58,14 @@ module.exports.create = function (req, res) {
 
 }
 
-module.exports.signIn = function (req, res) {
+module.exports.createSession = function (req, res) {
     return res.redirect('/');
 }
 
-module.exports.createSession = function (req, res) {
-    return res.redirect('/');
+module.exports.signOut = function (req, res, next) {
+    req.logOut(function (err) {
+        if (err) { return next(err); }
+
+        return res.redirect('/');
+    });
 }
