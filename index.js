@@ -16,6 +16,16 @@ const passport = require('passport');
 const passportLocal = require('./config/parallel-local-strategy');
 
 const MongoStore = require('connect-mongo');
+const sassMiddleware = require('node-sass-middleware');
+
+//Using the sass as first, to pre compile the scss file before the routes render the views
+app.use(sassMiddleware({
+    src: './assets/scss',
+    dest: './assets/css',
+    debug: true, // to show errors when there is a compilation error during the conversion to css
+    outputStyle: 'extended', // to show the css in multiple lines, compressed will show in single line
+    prefix: '/css' // prefix directory where it can find the css files
+}));
 
 // Middlware - to read the req query, body & params
 app.use(express.urlencoded());
