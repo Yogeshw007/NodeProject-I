@@ -19,17 +19,24 @@ module.exports.home = function (req, res) {
     // });
 
     // Find all the posts and populate the user (retrieve the entire user object) and send the posts object in the response
-    Post.find({}).populate('user').exec(function (err, posts) {
-        if (err) {
-            console.log('Error in finding the posts');
+    Post.find({})
+        .populate('user')
+        .populate({
+            path: 'comments',
+            populate: {
+                path: 'user'
+            }
+        })
+        .exec(function (err, posts) {
+            if (err) {
+                console.log('Error in finding the posts');
+                return res.render('home', {
+                    title: 'Home'
+                });
+            }
             return res.render('home', {
-                title: 'Home'
+                title: 'Home',
+                posts: posts
             });
-        }
-
-        return res.render('home', {
-            title: 'Home',
-            posts: posts
         });
-    });
 }
