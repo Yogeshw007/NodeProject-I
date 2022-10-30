@@ -9,3 +9,15 @@
         <input type="submit" value="Post">
     </form>
 </section>
+
+<ul id="posts-container">
+    <% for( let i=0; i < locals.posts.length; i++ ) { %>
+        <li class="posts">
+            <p>
+                <%= locals.posts[i].content %>
+                    <br>
+                    <%= locals.user.name %>
+            </p>
+        </li>
+        <% } %>
+</ul>
