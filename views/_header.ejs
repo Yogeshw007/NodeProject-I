@@ -1,15 +1,17 @@
-<head>
-    <h1>Page Header</h1>
-
+<header>
+    <h2><a href="/" id="home-link">Codiel</a></h2>
 
     <% if(locals.user){ %>
-        <a href="/users/profile">
-            <%= locals.user.name %>
-        </a>
-        <br>
-        <a href="/users/sign-out">Sign Out</a>
+        <div id="user-links">
+            <a href="/users/profile">
+                <%= locals.user.name %>
+            </a>
+            <a href="/users/sign-out">Sign Out</a>
+        </div>
         <% }else{ %>
-            <a href="/users/sign-in">Sign In</a>
-            <a href="/users/sign-up">Sign Up</a>
+            <div id="user-links">
+                <a href="/users/sign-in">Sign In</a>
+                <a href="/users/sign-up">Sign Up</a>
+            </div>
             <% } %>
-</head>
+</header>

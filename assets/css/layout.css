@@ -1,2 +1,24 @@
+header {
+  background-color: lightskyblue;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px; }
+  header #user-links {
+    text-transform: capitalize; }
+    header #user-links * {
+      margin-left: 10px; }
+  header a {
+    color: white;
+    text-decoration: none; }
+
 body {
   margin: 0; }
+  body #home-container {
+    height: 100vh; }
+
+footer {
+  background-color: gray;
+  color: white;
+  padding: 10px;
+  text-align: center; }

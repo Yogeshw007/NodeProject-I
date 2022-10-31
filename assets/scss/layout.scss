@@ -1,3 +1,36 @@
+ header{
+        background-color: lightskyblue;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 20px;
+
+        #user-links{
+            text-transform: capitalize;
+            
+            *{
+                margin-left: 10px;
+            }
+        }
+
+        a{
+            color: white;
+            text-decoration: none;
+        }
+    }
+
 body{
     margin: 0;
+
+    #home-container{
+        height: 100vh;
+    }
+}
+
+
+footer{
+    background-color: gray;
+    color: white;
+    padding: 10px;
+    text-align: center;
 }
