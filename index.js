@@ -18,6 +18,12 @@ const passportLocal = require('./config/parallel-local-strategy');
 const MongoStore = require('connect-mongo');
 const sassMiddleware = require('node-sass-middleware');
 
+// Flash helps to show notification
+const flash = require('connect-flash');
+
+// Adding middleware to transfer the flash object to res
+const customMware = require('./config/middleware');
+
 //Using the sass as first, to pre compile the scss file before the routes render the views
 app.use(sassMiddleware({
     src: './assets/scss',
@@ -75,6 +81,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(passport.setAuthenticatedUser);
+
+app.use(flash());
+app.use(customMware.setFlash);
 
 // use express router
 app.use('/', require('./routes'));

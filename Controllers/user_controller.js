@@ -44,42 +44,39 @@ module.exports.signIn = function (req, res) {
     }
 }
 
-module.exports.create = function (req, res) {
+module.exports.create = async function (req, res) {
     if (req.body.password != req.body.confirm_password) {
         console.log('Redirect from password')
         return res.redirect('back');
     }
 
-    User.findOne({ email: req.body.email }, function (err, user) {
-        if (err) { console.log('Error in finding user in signing up!'); return; };
+    try {
+        let user = User.findOne({ email: req.body.email });
 
         if (!user) {
             User.create(req.body, function (err, user) {
-                if (err) {
-                    console.log('Error in creating user while signing up!', err);
-                    return;
-                }
-                console.log('User created')
+                req.flash('success', 'User created');
                 return res.redirect('/users/sign-in/');
             });
         } else {
-            console.log('User creation failed');
+            req.flash('error', 'User creation failed')
             return res.redirect('back');
         }
-
-    });
-
+    } catch (err) {
+        console.log('error', err);
+        return;
+    }
 }
 
 module.exports.createSession = function (req, res) {
+    req.flash('success', 'Logged in Successfully!!');
     return res.redirect('/');
 }
 
-module.exports.signOut = function (req, res, next) {
+module.exports.destroySession = function (req, res) {
     req.logOut(function (err) {
         if (err) { return next(err); }
-
+        req.flash('success', 'You have logged out Successfully!!');
         return res.redirect('/');
     });
 }
-

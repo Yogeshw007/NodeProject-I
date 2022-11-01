@@ -5,20 +5,24 @@ const User = require('../models/user');
 //Passport to use the strategy
 //Authentication using passport
 passport.use(new LocalStrategry({
-    usernameField: 'email'
+    usernameField: 'email',
+    // passReqToCallback to take the req in the arguments which is used ot add the falsh messages here
+    passReqToCallback: true
 },
     //Callback function
     //Done is default to passport function its a callback - if req success / faliure
-    function (email, password, done) {
+    function (req, email, password, done) {
         //  find a user and establish the identity
         User.findOne({ email: email }, function (err, user) {
             if (err) {
-                console.log('Error in finding user --> Passport');
+                req.flash('error', 'Error in finding user-- > Passport');
+                // console.log('Error in finding user --> Passport');
                 return done(err);
             }
 
             if (!user || user.password != password) {
-                console.log('Invalid Username/Password')
+                req.flash('error', 'Invalid Username/Password');
+                // console.log('Invalid Username/Password');
                 // null represents no error since user found, authentication is false due to invalid information
                 return done(null, false);
             }
@@ -37,7 +41,10 @@ passport.serializeUser(function (user, done) {
 //Deserializing the user from the key in the cookies
 passport.deserializeUser(function (id, done) {
     User.findById(id, function (err, user) {
-        if (err) { console.log('Error in finding user --> Passport') };
+        if (err) {
+            req.flash('error', 'Error in finding user --> Passport');
+            // console.log('Error in finding user --> Passport') 
+        };
 
         return done(null, user);
     });

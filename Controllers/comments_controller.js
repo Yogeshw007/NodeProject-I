@@ -4,7 +4,7 @@ const Post = require('../models/post');
 module.exports.create = function (req, res) {
     Post.findById(req.body.post, function (err, post) {
         if (err) {
-            console.log('Error in finding the posts');
+            req.flash('error', 'Error in finding the posts');
             return res.redirect('/');
         }
 
@@ -14,12 +14,13 @@ module.exports.create = function (req, res) {
             user: req.user._id
         }, function (err, comment) {
             if (err) {
-                console.log('Error in creating the comments', err);
+                req.flash('error', err);
             } else {
                 // Extract the id from comment and push 
                 post.comments.push(comment);
                 // Save the final version of the data - Do on every update
                 post.save();
+                req.flash('sucess', 'Comments created successfully!');
             }
 
             res.redirect('/');
@@ -36,6 +37,7 @@ module.exports.destroy = function (req, res) {
             comment.remove();
 
             Post.findByIdAndUpdate(postId, { $pull: { comments: req.params.id } }, function (err, post) {
+                req.flash('success', 'Deleted the comments :(');
                 return res.redirect('back');
             });
         } else {
