@@ -1,4 +1,4 @@
-<li class="post-comment">
+<li id="post-comment-<%= comment.id %>">
     <% if (locals.user && locals.user.id==comment.user.id) { %>
         <small>
             <a href="/comments/destroy/<%= comment.id %> ">X</a>

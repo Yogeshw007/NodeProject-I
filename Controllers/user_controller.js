@@ -46,7 +46,6 @@ module.exports.signIn = function (req, res) {
 
 module.exports.create = async function (req, res) {
     if (req.body.password != req.body.confirm_password) {
-        console.log('Redirect from password')
         return res.redirect('back');
     }
 
