@@ -41,6 +41,8 @@ app.use(cookieParser());
 
 //Set the static file path - When using the assets directly give the sub folders like css/layout.css
 app.use(express.static('./assets'));
+// make the uploads available in the browse
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
 // Use the layouts before the routes
 app.use(expressLayouts);

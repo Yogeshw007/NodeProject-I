@@ -11,15 +11,43 @@ module.exports.profile = function (req, res) {
     });
 }
 
-module.exports.update = function (req, res) {
+module.exports.update = async function (req, res) {
+    // if (req.user.id == req.params.id) {
+    //     // req.body since the name & email is same as the req body values
+    //     User.findByIdAndUpdate(req.params.id, req.body, function (err, user) {
+    //         return res.redirect('back');
+    //     });
+    // } else {
+    //     req.flash('error', 'unauthorized');
+    //     return res.status('401').send('Unauthorized');
+    // }
+
+
     if (req.user.id == req.params.id) {
         // req.body since the name & email is same as the req body values
-        User.findByIdAndUpdate(req.params.id, req.body, function (err, user) {
-            return res.redirect('back');
-        });
+        try {
+            let user = await User.findByIdAndUpdate(req.params.id);
+            User.uploadAvatar(req, res, function (err) {
+                if (err) { console.log('Multer Error', err) }
+
+                user.name = req.body.name;
+                user.email = req.body.email;
+                if (req.file) {
+                    let fileName = req.file.path.split('\\').slice(-1);
+                    user.avatar = User.avatarPath + "/" + fileName;
+                }
+                user.save();
+
+            });
+        } catch (err) {
+            req.flash('error', err);
+        }
+        return res.redirect('back');
     } else {
+        req.flash('error', 'unauthorized');
         return res.status('401').send('Unauthorized');
     }
+
 }
 
 module.exports.signUp = function (req, res) {
