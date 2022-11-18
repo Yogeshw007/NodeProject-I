@@ -12,6 +12,7 @@ router.get('/sign-up', usersController.signUp);
 router.get('/sign-in', usersController.signIn);
 
 router.post('/create', usersController.create);
+router.get('/delete/avatar/:email', usersController.deleteAvatar);
 
 // Use passport as a middleware to authenticate
 router.post('/create-session', passport.authenticate(

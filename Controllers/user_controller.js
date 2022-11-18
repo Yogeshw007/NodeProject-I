@@ -1,5 +1,7 @@
 // Actions - profile, signup, signin
 const User = require("../models/user");
+const fs = require('fs');
+const path = require('path');
 
 module.exports.profile = function (req, res) {
 
@@ -22,7 +24,6 @@ module.exports.update = async function (req, res) {
     //     return res.status('401').send('Unauthorized');
     // }
 
-
     if (req.user.id == req.params.id) {
         // req.body since the name & email is same as the req body values
         try {
@@ -33,11 +34,14 @@ module.exports.update = async function (req, res) {
                 user.name = req.body.name;
                 user.email = req.body.email;
                 if (req.file) {
+                    if (user.avatar) {
+                        fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+                    }
+
                     let fileName = req.file.path.split('\\').slice(-1);
                     user.avatar = User.avatarPath + "/" + fileName;
                 }
                 user.save();
-
             });
         } catch (err) {
             req.flash('error', err);
@@ -74,11 +78,12 @@ module.exports.signIn = function (req, res) {
 
 module.exports.create = async function (req, res) {
     if (req.body.password != req.body.confirm_password) {
+        req.flash('error', 'Passwords do not match');
         return res.redirect('back');
     }
 
     try {
-        let user = User.findOne({ email: req.body.email });
+        let user = await User.findOne({ email: req.body.email });
 
         if (!user) {
             User.create(req.body, function (err, user) {
@@ -93,6 +98,23 @@ module.exports.create = async function (req, res) {
         console.log('error', err);
         return;
     }
+
+    // User.findOne({ email: req.body.email }, function (err, user) {
+    //     if (err) { req.flash('error', err); return }
+    //     console.log(user);
+    //     if (!user) {
+    //         User.create(req.body, function (err, user) {
+    //             if (err) { req.flash('error', err); return }
+
+    //             return res.redirect('/users/sign-in');
+    //         })
+    //     } else {
+    //         req.flash('success', 'You have signed up, login to continue!');
+    //         return res.redirect('back');
+    //     }
+
+    // });
+
 }
 
 module.exports.createSession = function (req, res) {
@@ -106,4 +128,25 @@ module.exports.destroySession = function (req, res) {
         req.flash('success', 'You have logged out Successfully!!');
         return res.redirect('/');
     });
+}
+
+module.exports.deleteAvatar = async function (req, res) {
+    try {
+        let user = await User.findOne({ email: req.params.email });
+
+        if (fs.existsSync(path.join(__dirname, '..', user.avatar))) {
+            console.log('avatar file exists')
+            fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+        }
+
+        user.avatar = null;
+        user.save();
+        req.flash('success', 'Deleted avatar successfully!');
+    } catch (err) {
+        req.flash('error', 'Delete Avatar image failed');
+        console.log('error', err);
+        return;
+    }
+
+    return res.redirect('back');
 }
