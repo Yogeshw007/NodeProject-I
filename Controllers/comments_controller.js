@@ -1,42 +1,47 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
+const commentsMailer = require('../mailers/comments_mailer');
 
-module.exports.create = function (req, res) {
-    Post.findById(req.body.post, function (err, post) {
-        if (err) {
-            req.flash('error', 'Error in finding the posts');
-            return res.redirect('/');
-        }
+module.exports.create = async function (req, res) {
+    try {
+        let post = await Post.findById(req.body.post);
+        if (post) {
+            let comment = await Comment.create({
+                content: req.body.content,
+                post: req.body.post,
+                user: req.user._id
+            });
 
-        Comment.create({
-            content: req.body.content,
-            post: req.body.post,
-            user: req.user._id
-        }, function (err, comment) {
-            if (err) {
-                req.flash('error', err);
-            } else {
-                // Extract the id from comment and push 
-                post.comments.push(comment);
+            await post.comments.push(comment);
+            await post.save();
 
-                // Save the final version of the data - Do on every update
-                post.save();
+            // comment = await comment.populate('user', 'name email').execPopulate();
+            await Comment.populate(comment, { path: 'user' });
 
-                if (req.xhr) {
-                    return res.status(200).json({
-                        data: {
-                            comment: comment,
-                            user: req.user
-                        }
-                    });
-                }
-
-                req.flash('sucess', 'Comments created successfully!');
+            commentsMailer.newComment(comment);
+            console.log(req.xhr);
+            if (req.xhr) {
+                return res.status(200).json({
+                    data: {
+                        comment: comment
+                    },
+                    message: "Post created!"
+                });
             }
 
+            req.flash('success', 'Comment published!');
+
             res.redirect('/');
-        });
-    });
+        } else {
+            console.log('Post not found to add comment');
+            return;
+
+        }
+    } catch (err) {
+        console.log('Error in adding comment for a post', err);
+        req.flash('error', err);
+        return;
+    }
 }
 
 module.exports.destroy = function (req, res) {

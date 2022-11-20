@@ -13,8 +13,11 @@ window.onload = function () {
 }
 
 let createComment = function (commentForm) {
+
+
     $(commentForm).submit(function (e) {
         e.preventDefault();
+
 
         $.ajax({
             type: 'post',
@@ -22,7 +25,9 @@ let createComment = function (commentForm) {
             data: commentForm.serialize(),
             success: function (data) {
                 let newComment = newCommentDOM(data.data.comment, data.data.user);
+                console.log(newComment);
                 $(`#post-comments-${data.data.comment.post}`).prepend(newComment);
+                console.log($(`#post-comments-${data.data.comment.post}`));
                 notifySuccessMsg('Created comment!!');
                 deleteComment($(newComment).find('a'));
             },
@@ -44,7 +49,7 @@ function newCommentDOM(comment, user) {
                 ${comment.content}
                     <br>
                     <small>
-                        ${user.name}
+                        ${comment.user.name}
                     </small>
             </p>
         </li>

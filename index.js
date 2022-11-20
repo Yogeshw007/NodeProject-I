@@ -13,7 +13,10 @@ const cookieParser = require('cookie-parser');
 
 //passport middleware
 const passport = require('passport');
-const passportLocal = require('./config/parallel-local-strategy');
+const passportLocal = require('./config/passport-local-strategy');
+const passportJWT = require('./config/passport-jwt-strategy');
+const passportGoogle = require('./config/passport-google-oauth20-strategy');
+// const nodemailers = require('./config/nodemailer');
 
 const MongoStore = require('connect-mongo');
 const sassMiddleware = require('node-sass-middleware');

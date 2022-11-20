@@ -40,11 +40,11 @@ userSchema.statics.uploadAvatar = multer({ storage: storage }).single('avatar');
 userSchema.statics.avatarPath = AVATAR_PATH;
 
 // To delete the password from the returned json when query
-userSchema.methods.toJSON = function () {
-    var userObject = this.toObject();
-    delete userObject.password;
-    return userObject;
-}
+// userSchema.methods.toJSON = function () {
+//     var userObject = this.toObject();
+//     delete userObject.password;
+//     return userObject;
+// }
 
 const User = mongoose.model('User', userSchema);
 
