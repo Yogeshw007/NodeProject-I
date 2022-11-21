@@ -2,9 +2,12 @@
 const User = require("../models/user");
 const fs = require('fs');
 const path = require('path');
+const ResetPass = require('../models/resetpasswordtoken');
+const crypto = require('crypto');
+const queue = require('../config/kue');
+const forgotPasswordEmailWorker = require('../workers/forgot_email_workers');
 
 module.exports.profile = function (req, res) {
-
     User.findById(req.params.id, function (err, user) {
         return res.render('user_profile', {
             title: 'User profile',
@@ -149,4 +152,61 @@ module.exports.deleteAvatar = async function (req, res) {
     }
 
     return res.redirect('back');
+}
+
+module.exports.forgotPassword = function (req, res) {
+    return res.render('forgot_password', {
+        title: 'Forgot password page'
+    });
+}
+
+module.exports.generateForgotPassword = async function (req, res) {
+    try {
+        let user = await User.findOne({ email: req.body.email });
+
+        let pass = await ResetPass.create({
+            user: user._id,
+            accessToken: crypto.randomBytes(20).toString('hex'),
+            is_valid: true
+        });
+
+        await ResetPass.populate(pass, { path: 'user' });
+
+        let job = queue.create('reset-password-emails', pass).save(function (err) {
+            if (err) {
+                console.log('Error in sending forgot password emails');
+                return;
+            }
+
+            console.log('forgot password email job enqueued ', job.id);
+        });
+
+        // return res.json(200, {
+        //     resetPasswordToken: pass
+        // });
+    } catch (err) {
+        console.log('Error in generating forgot password');
+        // return res.json(500, {
+        //     message: 'Internal server error'
+        // });
+    }
+
+    return res.redirect('back');
+}
+
+module.exports.resetPassword = async function (req, res) {
+    let resetPasswordToken = await ResetPass.findOne({ accessToken: req.body.accessToken }).populate('user');
+
+    if (req.body.password != req.body.confirm_password) {
+        return res.redirect('back');
+    }
+
+    let user = await User.findById(resetPasswordToken.user._id);
+    user.password = req.body.password;
+    await user.save();
+
+    resetPasswordToken.is_valid = false;
+    await resetPasswordToken.save();
+
+    return res.redirect('/users/sign-in');
 }
