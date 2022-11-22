@@ -1,7 +1,7 @@
 <li id="post-comment-<%= comment.id %>">
     <% if (locals.user && locals.user.id==comment.user.id) { %>
         <small>
-            <a href="/comments/destroy/<%= comment.id %> ">X</a>
+            <a class="delete-comment-button" href="/comments/destroy/<%= comment.id %> ">X</a>
         </small>
         <% } %>
             <p>
@@ -10,5 +10,10 @@
                     <small>
                         <%= comment.user.name %>
                     </small>
+
             </p>
+            <a class="likes-toggle-button" href="/likes/toggle/?id=<%= comment.id %>&type=Comment">
+                <%= comment.likes.length %> likes
+            </a>
+
 </li>

@@ -3,6 +3,7 @@ const Post = require('../models/post');
 const commentsMailer = require('../mailers/comments_mailer');
 const queue = require('../config/kue');
 const commentEmailWorker = require('../workers/comment_email_worker');
+const Like = require('../models/like');
 
 module.exports.create = async function (req, res) {
     try {
@@ -56,30 +57,34 @@ module.exports.create = async function (req, res) {
     }
 }
 
-module.exports.destroy = function (req, res) {
+module.exports.destroy = async function (req, res) {
 
-    Comment.findById(req.params.id, function (err, comment) {
+    try {
+        let comment = Comment.findById(req.params.id);
         if (comment.user == req.user.id) {
             let postId = comment.post;
 
             comment.remove();
 
-            Post.findByIdAndUpdate(postId, { $pull: { comments: req.params.id } }, function (err, post) {
-                req.flash('success', 'Deleted the comments :(');
+            await Post.findByIdAndUpdate(postId, { $pull: { comments: req.params.id } });
+            await Like.deleteMany({ likeable: comment._id, onModel: 'Comment' });
 
-                if (req.xhr) {
-                    return res.status(200).json({
-                        data: {
-                            commentId: req.params.id
-                        },
-                        message: 'Comment deleted!'
-                    });
-                }
+            req.flash('success', 'Deleted the comments :(');
 
-                return res.redirect('back');
-            });
-        } else {
-            return res.redirect('back');
+            if (req.xhr) {
+                return res.status(200).json({
+                    data: {
+                        commentId: req.params.id
+                    },
+                    message: 'Comment deleted!'
+                });
+            }
         }
-    });
+
+        return res.redirect('back');
+    } catch (err) {
+        console.log('Error in adding comment for a post', err);
+        req.flash('error', err);
+        return;
+    }
 }

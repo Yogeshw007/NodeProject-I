@@ -6,9 +6,9 @@ window.onload = function () {
 
     $('#posts-list-container>ul>li').each(function () {
         createComment($(this).find('.new-comment-form'));
-        $(this).find('.post-comments-list>ul>li>a').each(function () {
+        $(this).find('.post-comments-list>ul>li>a.delete-comment-button').each(function () {
             deleteComment($(this));
-        })
+        });
     });
 }
 
@@ -29,6 +29,9 @@ let createComment = function (commentForm) {
                 $(`#post-comments-${data.data.comment.post}`).prepend(newComment);
                 console.log($(`#post-comments-${data.data.comment.post}`));
                 notifySuccessMsg('Created comment!!');
+
+                likeToggle($(' .likes-toggle-button', newComment));
+
                 deleteComment($(newComment).find('a'));
             },
             error: function (error) {
@@ -43,7 +46,7 @@ function newCommentDOM(comment, user) {
     return $(`
         <li id="post-comment-${comment._id}">
             <small>
-                <a href="/comments/destroy/${comment._id}">X</a>
+                <a class="delete-comment-button" href="/comments/destroy/${comment._id}">X</a>
             </small>
             <p>
                 ${comment.content}
@@ -51,7 +54,11 @@ function newCommentDOM(comment, user) {
                     <small>
                         ${comment.user.name}
                     </small>
+                    
             </p>
+            <a class="likes-toggle-button" href="/likes/toggle/?id=${comment._id}&type=Comment">
+                        0 likes
+                    </a>
         </li>
     
     `);
@@ -92,6 +99,8 @@ let createPost = function () {
                 deletePost($(' .delete-post-button'), newPost);
                 createComment($(` #new-comment-form-${data.data.post.id}`), newPost);
 
+                likeToggle($(' .likes-toggle-button', newPost));
+
                 notifySuccessMsg('Post created');
             },
             error: function (error) {
@@ -113,6 +122,11 @@ function newPostDOM(post, user) {
                             <small>
                                 ${user.name}
                             </small>
+                             <p>
+                        <a class="likes-toggle-button" href="/likes/toggle/?id=${post._id}&type=Post">
+                            0 likes
+                        </a>
+                    </p>
             </p>
             <div class="post-comments">
                     <form id="new-comment-form-${post.id}" class="new-comment-form" action="/comments/create" method="POST">
