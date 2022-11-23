@@ -1,5 +1,6 @@
 // Actions - profile, signup, signin
 const User = require("../models/user");
+const FriendShip = require('../models/friendship');
 const fs = require('fs');
 const path = require('path');
 const ResetPass = require('../models/resetpasswordtoken');
@@ -8,10 +9,14 @@ const queue = require('../config/kue');
 const forgotPasswordEmailWorker = require('../workers/forgot_email_workers');
 
 module.exports.profile = function (req, res) {
-    User.findById(req.params.id, function (err, user) {
+    User.findById(req.params.id, async function (err, user) {
+        let friendship = await FriendShip.find({ to_user: req.params.id });
+        console.log('friendship ', friendship)
+
         return res.render('user_profile', {
             title: 'User profile',
-            profile_user: user
+            profile_user: user,
+            friendship: (friendship.length != 0)
         });
     });
 }
@@ -209,4 +214,67 @@ module.exports.resetPassword = async function (req, res) {
     await resetPasswordToken.save();
 
     return res.redirect('/users/sign-in');
+}
+
+module.exports.addFriend = async function (req, res) {
+    try {
+        let friendship = await FriendShip.create({
+            from_user: req.body.from_user,
+            to_user: req.body.to_user
+        });
+
+        let friendship2 = await FriendShip.create({
+            from_user: req.body.to_user,
+            to_user: req.body.from_user
+        });
+
+        let user = await User.findById(req.user._id);
+        let user2 = await User.findById(req.body.to_user);
+
+        user.friendship.push(friendship);
+        user2.friendship.push(friendship2);
+        await user.save();
+        await user2.save();
+
+        return res.json(200, {
+            friendship_added: true
+        });
+    } catch (err) {
+        console.log('Error in creating friendship ', err);
+        return res.json(500, {
+            message: 'Internal server error',
+            friendship_added: false
+        })
+    }
+}
+
+module.exports.removeFriend = async function (req, res) {
+    try {
+        console.log('Remove friend')
+
+        let friendship = await FriendShip.findOne({ from_user: req.body.from_user, to_user: req.body.to_user });
+        let friendship2 = await FriendShip.findOne({ from_user: req.body.to_user, to_user: req.body.from_user });
+
+        let user = await User.findById(req.user._id);
+        let user2 = await User.findById(req.body.to_user);
+
+        await user.friendship.pull(friendship._id);
+        await user2.friendship.pull(friendship2._id);
+        await user.save();
+        await user2.save();
+
+        await friendship.remove();
+        await friendship2.remove();
+
+        return res.json(200, {
+            message: 'Friend Removed',
+            friendship_removed: true
+        });
+    } catch (err) {
+        console.log(err.responseText)
+        return res.json(500, {
+            message: 'Failed to remove friend',
+            friendship_removed: false,
+        })
+    }
 }

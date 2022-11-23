@@ -30,5 +30,7 @@ router.get('/forgot-password', usersController.forgotPassword);
 router.post('/generate-forgot-password', usersController.generateForgotPassword);
 
 router.post('/update-password', usersController.resetPassword);
+router.post('/add-friend', usersController.addFriend);
+router.post('/remove-friend', usersController.removeFriend);
 
 module.exports = router;

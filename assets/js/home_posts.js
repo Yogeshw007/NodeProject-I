@@ -13,11 +13,8 @@ window.onload = function () {
 }
 
 let createComment = function (commentForm) {
-
-
     $(commentForm).submit(function (e) {
         e.preventDefault();
-
 
         $.ajax({
             type: 'post',

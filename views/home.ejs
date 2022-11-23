@@ -20,16 +20,29 @@
                 </div>
     </section>
 
-    <section id="user-friends">
-        <h4>Friends</h4>
-        <% for(let user of all_users){ %>
-            <p>
-                <a href="/users/profile/<%= user.id %>">
-                    <%= user.name %>
-                </a>
-            </p>
-            <% } %>
+    <section id="users-friends-container">
+        <section id="user-friends">
+            <h4>Friends</h4>
+            <% friendship.forEach(friend=> { %>
+                <p>
+                    <a href="/users/profile/<%= friend._id%>">
+                        <%= friend.name %>
+                    </a>
+                </p>
+                <% }) %>
+        </section>
+        <section id="users">
+            <h4>Users</h4>
+            <% for(let user of all_users){ %>
+                <p>
+                    <a href="/users/profile/<%= user.id %>">
+                        <%= user.name %>
+                    </a>
+                </p>
+                <% } %>
+        </section>
     </section>
+
 </div>
 <script src="/js/home_posts.js"></script>
 <script src="/js/toggle_likes.js"></script>

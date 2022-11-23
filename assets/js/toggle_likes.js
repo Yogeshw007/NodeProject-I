@@ -6,7 +6,6 @@ window.onload = function () {
 
 function likeToggle(likeButton) {
     $(likeButton).click(function (e) {
-        console.log('Like Button function')
         e.preventDefault();
 
         $.ajax({

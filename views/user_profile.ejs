@@ -12,12 +12,37 @@
         <input type="file" name="avatar" placeholder="Profile picture">
         <input type="submit" value="Update">
     </form>
+
     <% } else{ %>
         <p>
-
             <%= profile_user.name %>
         </p>
         <p>
             <%= profile_user.email %>
         </p>
-        <% } %>
+        <% if (friendship) { %>
+            <form action="/users/remove-friend" id="remove-friendship-form" method="POST">
+                <input type="hidden" name="from_user" value="<%= user._id %>">
+                <input type="hidden" name="to_user" value="<%= profile_user._id %>">
+                <h4>
+                    <input type="submit" value="Remove Friend" id="friendship-toggle">
+                </h4>
+            </form>
+
+            <br>
+            <br>
+            <% } else { %>
+                <form action="/users/add-friend" id="add-friendship-form" method="POST">
+                    <input type="hidden" name="from_user" value="<%= user._id %>">
+                    <input type="hidden" name="to_user" value="<%= profile_user._id %>">
+                    <h4>
+                        <input type="submit" value="Add Friend" id="friendship-toggle">
+                    </h4>
+                </form>
+
+                <br>
+                <br>
+                <% } %>
+                    <% } %>
+
+                        <script src="/js/friendship.js"></script>
