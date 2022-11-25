@@ -20,32 +20,33 @@
                 <% } %>
 
                     <%- body %>
+                        <%- include('_chat_box'); %>
+                            <%- include('_footer'); %>
 
-                        <%- include('_footer'); %>
-
-                            <%- script %>
-                                <script>
+                                <%- script %>
+                                    <script>
             <% if (flash.success && flash.success.length > 0) { %>
-                                        new Noty({
-                                            text: "<%= flash.success%>",
-                                            theme: 'relax',
-                                            type: 'success',
-                                            layout: 'topRight',
-                                            timeout: 1500
-                                        }).show();                  
+                                            new Noty({
+                                                text: "<%= flash.success%>",
+                                                theme: 'relax',
+                                                type: 'success',
+                                                layout: 'topRight',
+                                                timeout: 1500
+                                            }).show();                  
 
                 <% } %>
                 <% if (flash.error && flash.error.length > 0) { %>
-                                        new Noty({
-                                            text: "<%= flash.error%>",
-                                            theme: 'relax',
-                                            type: 'error',
-                                            layout: 'topRight',
-                                            timeout: 1500
-                                        }).show();                
+                                            new Noty({
+                                                text: "<%= flash.error%>",
+                                                theme: 'relax',
+                                                type: 'error',
+                                                layout: 'topRight',
+                                                timeout: 1500
+                                            }).show();                
 
                 <% } %>
-                                </script>
+                                    </script>
+
 
 </body>
 

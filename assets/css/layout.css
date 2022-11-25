@@ -16,6 +16,56 @@ body {
   margin: 0; }
   body #home-container {
     height: 100vh; }
+  body #chat-container {
+    width: 270px;
+    height: 300px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    border: 2px dotted lightblue;
+    list-style: none;
+    z-index: 10; }
+    body #chat-container #chat-messages-list {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      list-style: none; }
+      body #chat-container #chat-messages-list .other-message, body #chat-container #chat-messages-list .self-message {
+        padding: 0.4rem;
+        font-size: 1.2rem;
+        min-width: 45%;
+        text-align: left;
+        position: relative;
+        margin: 0.4rem 0; }
+        body #chat-container #chat-messages-list .other-message span, body #chat-container #chat-messages-list .self-message span {
+          display: block;
+          margin-bottom: 1rem; }
+        body #chat-container #chat-messages-list .other-message sub, body #chat-container #chat-messages-list .self-message sub {
+          font-size: 0.8rem;
+          position: absolute;
+          margin-top: 0.4rem;
+          bottom: 0;
+          right: 0;
+          padding-left: 0.5rem; }
+      body #chat-container #chat-messages-list .self-message {
+        align-self: flex-end;
+        background-color: lightcoral; }
+      body #chat-container #chat-messages-list .other-message {
+        align-self: flex-start;
+        background-color: aquamarine; }
+    body #chat-container #chat-footer {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      width: inherit; }
+      body #chat-container #chat-footer #send-message {
+        color: white;
+        padding: 0.4rem 1rem;
+        font-size: 1.2rem;
+        background-color: lightgreen;
+        border: none; }
+      body #chat-container #chat-footer #chat-message-input {
+        flex-grow: 2; }
 
 footer {
   background-color: gray;

@@ -25,6 +25,81 @@ body{
     #home-container{
         height: 100vh;
     }
+
+    #chat-container{
+      width: 270px;
+      height: 300px;
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      border: 2px dotted lightblue;
+      list-style: none;
+      z-index: 10;
+      
+     
+        #chat-messages-list{
+            display: flex;
+            flex-direction: column;
+             padding: 1rem;
+             list-style: none;
+
+
+            .other-message, .self-message{
+                padding: 0.4rem;
+                font-size: 1.2rem;
+                min-width: 45%;
+                text-align: left;
+                position: relative;
+                margin: 0.4rem 0;
+
+                span{
+                    display: block;
+                    margin-bottom: 1rem;
+                }
+
+                sub{    
+                    font-size: 0.8rem;
+                    position: absolute;
+                    margin-top: 0.4rem;
+                    bottom: 0;
+                    right: 0;
+                    padding-left: 0.5rem;
+                }
+            }   
+
+            .self-message{
+                align-self: flex-end;
+                background-color: lightcoral;
+            }
+
+            .other-message{
+                align-self: flex-start;
+                background-color: aquamarine;
+            }
+
+            
+
+        }
+
+        #chat-footer{
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            width: inherit;
+
+            #send-message{
+                color: white;
+                padding: 0.4rem 1rem;
+                font-size: 1.2rem;
+                background-color: lightgreen;
+                border: none;
+            }
+
+            #chat-message-input{
+                flex-grow: 2;
+            }
+        }
+    }
 }
 
 

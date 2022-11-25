@@ -18,6 +18,8 @@ const passportJWT = require('./config/passport-jwt-strategy');
 const passportGoogle = require('./config/passport-google-oauth20-strategy');
 // const nodemailers = require('./config/nodemailer');
 
+const socket = require('./config/chat_sockets');
+
 const MongoStore = require('connect-mongo');
 const sassMiddleware = require('node-sass-middleware');
 
@@ -26,6 +28,11 @@ const flash = require('connect-flash');
 
 // Adding middleware to transfer the flash object to res
 const customMware = require('./config/middleware');
+
+const chatServer = require('http').Server(app);
+const chatSockets = require('./config/chat_sockets').chatSockets(chatServer);
+chatServer.listen('5000');
+console.log('Chat server is listening on port 5000');
 
 //Using the sass as first, to pre compile the scss file before the routes render the views
 app.use(sassMiddleware({
