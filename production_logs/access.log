@@ -1,0 +1,5 @@
+[0mGET / [32m200[0m 1041.474 ms - 5536[0m
+[0mGET /js/home_posts.js [33m404[0m 4.643 ms - 155[0m
+[0mGET /js/toggle_likes.js [33m404[0m 8.952 ms - 157[0m
+[0mGET /js/chat_engine.js [33m404[0m 3.694 ms - 156[0m
+::1 - - [26/Nov/2022:13:04:03 +0000] "GET / HTTP/1.1" 500 2192 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"

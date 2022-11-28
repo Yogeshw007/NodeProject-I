@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
+
+require('dotenv').config();
+require('./config/view-helpers')(app);
+
 const port = 8000;
 const expressLayouts = require('express-ejs-layouts');
+
 // MongoDB
 const db = require('./config/mongoose');
 
@@ -16,7 +21,7 @@ const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
 const passportJWT = require('./config/passport-jwt-strategy');
 const passportGoogle = require('./config/passport-google-oauth20-strategy');
-// const nodemailers = require('./config/nodemailer');
+const nodemailers = require('./config/nodemailer');
 
 const socket = require('./config/chat_sockets');
 
@@ -34,14 +39,19 @@ const chatSockets = require('./config/chat_sockets').chatSockets(chatServer);
 chatServer.listen('5000');
 console.log('Chat server is listening on port 5000');
 
+const path = require('path');
+const env = require('./config/environment');
+
 //Using the sass as first, to pre compile the scss file before the routes render the views
-app.use(sassMiddleware({
-    src: './assets/scss',
-    dest: './assets/css',
-    debug: true, // to show errors when there is a compilation error during the conversion to css
-    outputStyle: 'extended', // to show the css in multiple lines, compressed will show in single line
-    prefix: '/css' // prefix directory where it can find the css files
-}));
+if (env.name == 'development') {
+    app.use(sassMiddleware({
+        src: path.join(__dirname, env.asset_path, 'scss'),
+        dest: path.join(__dirname, env.asset_path, 'scss'),
+        debug: true, // to show errors when there is a compilation error during the conversion to css
+        outputStyle: 'extended', // to show the css in multiple lines, compressed will show in single line
+        prefix: '/css' // prefix directory where it can find the css files
+    }));
+}
 
 // Middlware - to read the req query, body & params
 app.use(express.urlencoded());
@@ -50,9 +60,13 @@ app.use(express.urlencoded());
 app.use(cookieParser());
 
 //Set the static file path - When using the assets directly give the sub folders like css/layout.css
-app.use(express.static('./assets'));
+app.use(express.static(env.asset_path));
 // make the uploads available in the browse
 app.use('/uploads', express.static(__dirname + '/uploads'));
+
+// Used for logging the messages
+const logger = require('morgan');
+app.use(logger(env.morgan.mode, env.morgan.options));
 
 // Use the layouts before the routes
 app.use(expressLayouts);
@@ -72,7 +86,7 @@ app.set('views', './views');
 app.use(session({
     name: 'codiel',
     // TODO change the secret before deploy in production
-    secret: 'blahsomething',
+    secret: env.session_cookie_key,
     saveUninitialized: false, //Session is not initialized - User is not logged in then extra information is not required to save in cookie
     resave: false, //Save again the cookie
     cookie: {
@@ -106,5 +120,5 @@ app.listen(port, function (err) {
         return;
     }
 
-    console.log(`Server is running on port: ${port}`);
+    console.log(`Server is running on port: ${port} env ${process.env.CODIEL_ENVIRONMENT}`);
 });
